@@ -147,9 +147,10 @@ class DCGANAgent:
 
         for curr_it, x in enumerate(tqdm_batch):
             #y = torch.full((self.batch_size,), self.real_label)
-            y = torch.randn(self.batch_size, )
-            fake_noise = torch.randn(self.batch_size, self.config.g_input_size, 1, 1)
             x = x[0]
+            y = torch.randn(x.size(0), )
+            fake_noise = torch.randn(x.size(0), self.config.g_input_size, 1, 1)
+            #x = x[0]
             if self.cuda:
                 x = x.cuda(async=self.config.async_loading)
                 y = y.cuda(async=self.config.async_loading)
