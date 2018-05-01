@@ -8,6 +8,7 @@ import torch.nn as nn
 
 import json
 from easydict import EasyDict as edict
+from graphs.weights_initializer import weights_init
 
 class Generator(nn.Module):
     def __init__(self, config):
@@ -31,6 +32,8 @@ class Generator(nn.Module):
         self.deconv5 = nn.ConvTranspose2d(in_channels=self.config.num_filt_g, out_channels=self.config.input_channels, kernel_size=4, stride=2, padding=1, bias=False)
 
         self.out = nn.Tanh()
+
+        self.apply(weights_init)
 
     def forward(self, x):
         out = self.deconv1(x)
@@ -70,7 +73,7 @@ class Generator(nn.Module):
 netG testing
 """
 def main():
-    config = json.load(open('../../configs/GAN_config.json'))
+    config = json.load(open('../../configs/dcgan_exp_0.json'))
     config = edict(config)
     inp  = torch.autograd.Variable(torch.randn(config.batch_size, config.g_input_size, 1, 1))
     print (inp.shape)

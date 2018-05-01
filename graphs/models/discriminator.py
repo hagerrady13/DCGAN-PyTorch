@@ -8,6 +8,7 @@ import torch.nn as nn
 
 import json
 from easydict import EasyDict as edict
+from graphs.weights_initializer import weights_init
 
 
 class Discriminator(nn.Module):
@@ -32,6 +33,7 @@ class Discriminator(nn.Module):
 
         self.out = nn.Sigmoid()
 
+        self.apply(weights_init)
 
     def forward(self, x):
         out = self.conv1(x)
@@ -59,7 +61,7 @@ class Discriminator(nn.Module):
 netD testing
 """
 def main():
-    config = json.load(open('../../configs/GAN_config.json'))
+    config = json.load(open('../../configs/dcgan_exp_0.json'))
     config = edict(config)
     inp  = torch.autograd.Variable(torch.randn(config.batch_size, config.input_channels, config.image_size, config.image_size))
     print (inp.shape)
