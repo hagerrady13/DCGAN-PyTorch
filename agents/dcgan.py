@@ -8,7 +8,7 @@ import torch
 from torch import nn
 from torch.backends import cudnn
 from torch.autograd import Variable
-from torchvision.utils import vutils
+import torchvision.utils as vutils
 
 from graphs.models.generator import Generator
 from graphs.models.discriminator import Discriminator
@@ -46,7 +46,7 @@ class DCGANAgent:
         self.current_iteration = 0
         self.best_valid_mean_iou = 0
 
-        self.fixed_noise = torch.randn(self.batch_size, self.config.g_input_size, 1, 1)
+        self.fixed_noise = Variable(torch.randn(self.batch_size, self.config.g_input_size, 1, 1))
         self.real_label = 1
         self.fake_label = 0
 
@@ -58,18 +58,20 @@ class DCGANAgent:
         self.cuda = self.is_cuda & self.config.cuda
 
         # set the manual seed for torch
-        if self.config.seed is None:
-            self.manual_seed = random.randint(1, 10000)
+        #if not self.config.seed:
+        self.manual_seed = random.randint(1, 10000)
+        #self.manual_seed = self.config.seed
+        print ("seed: " , self.manual_seed)
         random.seed(self.manual_seed)
         torch.manual_seed(self.manual_seed)
 
         if self.cuda:
             print("Program will run on *****GPU-CUDA***** ")
-            torch.cuda.manual_seed_all(self.config.seed)
+            torch.cuda.manual_seed_all(self.manual_seed)
             print_cuda_statistics()
 
-            self.vgg_model = self.vgg_model.cuda()
-            self.model = self.model.cuda()
+            self.netG = self.netG.cuda()
+            self.netD = self.netD.cuda()
             self.loss = self.loss.cuda()
         else:
             print("Program will run on *****CPU***** ")
@@ -136,32 +138,36 @@ class DCGANAgent:
         # initialize tqdm batch
         tqdm_batch = tqdm(self.dataloader.loader, total=self.dataloader.num_iterations, desc="epoch-{}-".format(self.current_epoch))
 
-        self.model.train()
+        self.netG.train()
+        self.netD.train()
 
         epoch_lossG = AverageMeter()
         epoch_lossD = AverageMeter()
 
 
         for curr_it, x in enumerate(tqdm_batch):
-            y = torch.full((self.batch_size,), self.real_label)
+            #y = torch.full((self.batch_size,), self.real_label)
+            y = torch.randn(self.batch_size, )
             fake_noise = torch.randn(self.batch_size, self.config.g_input_size, 1, 1)
-
-
+            x = x[0]
             if self.cuda:
                 x = x.cuda(async=self.config.async_loading)
                 y = y.cuda(async=self.config.async_loading)
                 fake_noise = fake_noise.cuda(async=self.config.async_loading)
+                self.fixed_noise = self.fixed_noise.cuda(async=self.config.async_loading)
 
             x = Variable(x)
-
+            y = Variable(y)
+            fake_noise = Variable(fake_noise)
             ####################
             # Update D network #
             # train with real
             self.netD.zero_grad()
             D_real_out = self.netD(x)
+            y.fill_(self.real_label)
             loss_D_real = self.loss(D_real_out, y)
             loss_D_real.backward()
-            D_mean_real_out = D_real_out.mean().item()
+            #D_mean_real_out = D_real_out.mean().item()
 
             # train with fake
             G_fake_out = self.netG(fake_noise)
@@ -171,7 +177,7 @@ class DCGANAgent:
 
             loss_D_fake = self.loss(D_fake_out, y)
             loss_D_fake.backward()
-            D_mean_fake_out = D_fake_out.mean().item()
+            #D_mean_fake_out = D_fake_out.mean().item()
 
             loss_D = loss_D_fake + loss_D_real
             self.optimD.step()
@@ -184,7 +190,7 @@ class DCGANAgent:
             loss_G = self.loss(D_out, y)
             loss_G.backward()
 
-            D_G_mean_out = D_out.mean().item()
+            #D_G_mean_out = D_out.mean().item()
 
             self.optimG.step()
 
@@ -206,8 +212,7 @@ class DCGANAgent:
         tqdm_batch.close()
 
         print("Training at epoch-" + str(self.current_epoch) + " | " + "Discriminator loss: " + str(
-            epoch_lossD.val) + " - Generator Loss-: " + str(epoch_lossG.val) + " - mean 1: " + str(D_mean_real_out) +
-            "- mean 2: " + str(D_mean_fake_out) + " - mean 3: " + str(D_G_mean_out))
+            epoch_lossD.val) + " - Generator Loss-: " + str(epoch_lossG.val))
 
 
     def validate(self):

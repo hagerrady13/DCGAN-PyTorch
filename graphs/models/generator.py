@@ -40,31 +40,21 @@ class Generator(nn.Module):
         out = self.batch_norm1(out)
         out = self.relu(out)
 
-        print (out.shape)
-
         out = self.deconv2(out)
         out = self.batch_norm2(out)
         out =  self.relu(out)
-
-        print (out.shape)
 
         out = self.deconv3(out)
         out = self.batch_norm3(out)
         out =  self.relu(out)
 
-        print (out.shape)
-
         out = self.deconv4(out)
         out = self.batch_norm4(out)
         out =  self.relu(out)
 
-        print (out.shape)
-
         out = self.deconv5(out)
-        print (out.shape)
 
         out = self.out(out)
-        print (out.shape)
 
         return out
 
