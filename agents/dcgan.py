@@ -73,6 +73,8 @@ class DCGANAgent:
             self.netG = self.netG.cuda()
             self.netD = self.netD.cuda()
             self.loss = self.loss.cuda()
+            self.fixed_noise = self.fixed_noise.cuda(async=self.config.async_loading)
+
         else:
             print("Program will run on *****CPU***** ")
 
@@ -150,18 +152,17 @@ class DCGANAgent:
             x = x[0]
             y = torch.randn(x.size(0), )
             fake_noise = torch.randn(x.size(0), self.config.g_input_size, 1, 1)
-            #x = x[0]
+
             if self.cuda:
                 x = x.cuda(async=self.config.async_loading)
                 y = y.cuda(async=self.config.async_loading)
                 fake_noise = fake_noise.cuda(async=self.config.async_loading)
-                self.fixed_noise = self.fixed_noise.cuda(async=self.config.async_loading)
 
             x = Variable(x)
             y = Variable(y)
             fake_noise = Variable(fake_noise)
             ####################
-            # Update D network #
+            # Update D network: maximize log(D(x)) + log(1 - D(G(z)))
             # train with real
             self.netD.zero_grad()
             D_real_out = self.netD(x)
@@ -184,7 +185,7 @@ class DCGANAgent:
             self.optimD.step()
 
             ####################
-            # Update G network #
+            # Update G network: maximize log(D(G(z)))
             self.netG.zero_grad()
             y.fill_(self.real_label)
             D_out = self.netD(G_fake_out)
@@ -195,20 +196,19 @@ class DCGANAgent:
 
             self.optimG.step()
 
-            epoch_lossD.update(loss_D)
-            epoch_lossG.update(loss_G)
+            epoch_lossD.update(loss_D.data[0])
+            epoch_lossG.update(loss_G.data[0])
 
             self.current_iteration += 1
 
-            if curr_it % 100 == 0:
-                self.summary_writer.add_scalar("epoch/Generator_loss", epoch_lossG.val, self.current_iteration)
-                self.summary_writer.add_scalar("epoch/Discriminator_loss", epoch_lossD.val, self.current_iteration)
+            self.summary_writer.add_scalar("epoch/Generator_loss", epoch_lossG.val, self.current_iteration)
+            self.summary_writer.add_scalar("epoch/Discriminator_loss", epoch_lossD.val, self.current_iteration)
 
-                self.summary_writer.add_image("Real image {}".format(curr_it),
-                                              x, self.current_iteration)
-                Gen_out = self.netG(self.fixed_noise)
-                self.summary_writer.add_image("Generated Image{}".format(curr_it),
-                                              Gen_out.detach(), self.current_iteration)
+        self.summary_writer.add_image("Real Images",
+                                      x, self.current_iteration)
+        gen_out = self.netG(self.fixed_noise)
+        self.summary_writer.add_image("Generated Images",
+                                      gen_out.detach(), self.current_iteration)
 
         tqdm_batch.close()
 
