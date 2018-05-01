@@ -1,0 +1,13 @@
+{
+  "relu_slope": 0.2,
+
+  "input_channels": 3,
+  "image_size" : 64,
+
+  "g_input_size": 100,
+
+  "num_filt_g" : 64,
+  "num_filt_d": 64,
+
+  "batch_size": 4
+}
