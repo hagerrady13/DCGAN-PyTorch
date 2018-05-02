@@ -204,10 +204,10 @@ class DCGANAgent:
             self.summary_writer.add_scalar("epoch/Generator_loss", epoch_lossG.val, self.current_iteration)
             self.summary_writer.add_scalar("epoch/Discriminator_loss", epoch_lossD.val, self.current_iteration)
 
-        self.summary_writer.add_image("Real Images",
-                                      x, self.current_iteration)
-        gen_out = self.netG(self.fixed_noise)
-        self.summary_writer.add_image("Generated Images",
+            if curr_it % 1000 ==  0:
+                self.summary_writer.add_image("Real Image", x, self.current_iteration)
+                gen_out = self.netG(self.fixed_noise)
+                self.summary_writer.add_image("Generated Images",
                                       gen_out.detach(), self.current_iteration)
 
         tqdm_batch.close()
