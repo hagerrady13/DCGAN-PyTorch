@@ -1,5 +1,5 @@
 {
-  "exp_name": "exp_5",
+  "exp_name": "exp_13",
   "agent": "DCGANAgent",
   "mode": "train",
 
@@ -24,7 +24,7 @@
   "beta1": 0.5,
   "beta2": 0.999,
 
-  "max_epoch": 30,
+  "max_epoch": 20,
 
   "validate_every": 2,
 

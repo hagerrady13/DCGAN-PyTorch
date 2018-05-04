@@ -208,15 +208,26 @@ class DCGANAgent:
             self.summary_writer.add_scalar("epoch/Generator_loss", epoch_lossG.val, self.current_iteration)
             self.summary_writer.add_scalar("epoch/Discriminator_loss", epoch_lossD.val, self.current_iteration)
 
-            if self.current_iteration % 1000 ==  0:
-                self.summary_writer.add_image("train/Real_Image", x, self.current_iteration)
-                gen_out = self.netG(self.fixed_noise)
+            #if curr_it % 1000 ==  0:
+                #self.summary_writer.add_image("train/Real_Image", x, self.current_iteration)
+                #gen_out = self.netG(self.fixed_noise)
 
-                out_img = self.dataloader.plot_samples_per_epoch(gen_out.data, self.current_iteration)
-                self.summary_writer.add_image('train/generated_image', out_img, self.current_iteration)
-                self.summary_writer.add_image("Generated Images",out_img, self.current_iteration)
+                #out_img = self.dataloader.plot_samples_per_epoch(gen_out.data, self.current_iteration)
+                #self.summary_writer.add_image('train/generated_image', out_img, self.current_iteration)
+                #self.summary_writer.add_image("Generated Images",out_img, self.current_iteration)
+
+            #self.summary_writer.add_scalar("epoch/Generator_loss", epoch_lossG.val, self.current_iteration)
+            #self.summary_writer.add_scalar("epoch/Discriminator_loss", epoch_lossD.val, self.current_iteration)
+
+            #if curr_it % 1000 ==  0:
+        #self.summary_writer.add_image("train/Real_Image", x, self.current_iteration)
+        gen_out = self.netG(self.fixed_noise)
+        out_img = self.dataloader.plot_samples_per_epoch(gen_out.data, self.current_iteration)
+        self.summary_writer.add_image('train/generated_image', out_img, self.current_iteration)
 
         tqdm_batch.close()
+        #self.summary_writer.add_scalar("epoch/Generator_loss", epoch_lossG.val, self.current_iteration)
+        #self.summary_writer.add_scalar("epoch/Discriminator_loss", epoch_lossD.val, self.current_iteration)
 
         print("Training at epoch-" + str(self.current_epoch) + " | " + "Discriminator loss: " + str(
             epoch_lossD.val) + " - Generator Loss-: " + str(epoch_lossG.val))
