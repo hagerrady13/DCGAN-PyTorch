@@ -96,6 +96,8 @@ class DCGANAgent:
             self.optimG.load_state_dict(checkpoint['G_optimizer'])
             self.netD.load_state_dict(checkpoint['D_state_dict'])
             self.optimD.load_state_dict(checkpoint['D_optimizer'])
+            self.fixed_noise = checkpoint['fixed_noise']
+            self.manual_seed = checkpoint['manual_seed']
 
             print("Checkpoint loaded successfully from '{}' at (epoch {}) at (iteration {})\n"
                   .format(self.config.checkpoint_dir, checkpoint['epoch'], checkpoint['iteration']))
@@ -110,7 +112,9 @@ class DCGANAgent:
             'G_state_dict': self.netG.state_dict(),
             'G_optimizer': self.optimG.state_dict(),
             'D_state_dict': self.netD.state_dict(),
-            'D_optimizer': self.optimD.state_dict()
+            'D_optimizer': self.optimD.state_dict(),
+            'fixed_noise': self.fixed_noise,
+            'manual_seed': self.manual_seed
         }
         # Save the state
         torch.save(state, self.config.checkpoint_dir + file_name)
@@ -204,11 +208,13 @@ class DCGANAgent:
             self.summary_writer.add_scalar("epoch/Generator_loss", epoch_lossG.val, self.current_iteration)
             self.summary_writer.add_scalar("epoch/Discriminator_loss", epoch_lossD.val, self.current_iteration)
 
-            if curr_it % 1000 ==  0:
-                self.summary_writer.add_image("Real Image", x, self.current_iteration)
+            if self.current_iteration % 1000 ==  0:
+                self.summary_writer.add_image("train/Real_Image", x, self.current_iteration)
                 gen_out = self.netG(self.fixed_noise)
-                self.summary_writer.add_image("Generated Images",
-                                      gen_out.detach(), self.current_iteration)
+
+                out_img = self.dataloader.plot_samples_per_epoch(gen_out.data, self.current_iteration)
+                self.summary_writer.add_image('train/generated_image', out_img, self.current_iteration)
+                self.summary_writer.add_image("Generated Images",out_img, self.current_iteration)
 
         tqdm_batch.close()
 
