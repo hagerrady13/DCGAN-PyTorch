@@ -56,7 +56,6 @@ class DCGANAgent:
             print("WARNING: You have a CUDA device, so you should probably enable CUDA")
 
         self.cuda = self.is_cuda & self.config.cuda
-
         # set the manual seed for torch
         #if not self.config.seed:
         self.manual_seed = random.randint(1, 10000)
@@ -107,7 +106,7 @@ class DCGANAgent:
 
     def save_checkpoint(self, file_name="checkpoint.pth.tar", is_best = 0):
         state = {
-            'epoch': self.current_epoch + 1,
+            'epoch': self.current_epoch,
             'iteration': self.current_iteration,
             'G_state_dict': self.netG.state_dict(),
             'G_optimizer': self.optimG.state_dict(),
@@ -200,8 +199,8 @@ class DCGANAgent:
 
             self.optimG.step()
 
-            epoch_lossD.update(loss_D.data[0])
-            epoch_lossG.update(loss_G.data[0])
+            epoch_lossD.update(loss_D.item())
+            epoch_lossG.update(loss_G.item())
 
             self.current_iteration += 1
 
