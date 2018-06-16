@@ -56,9 +56,9 @@ Generated Images after training:
 ![alt text](./utils/assets/samples_epoch_63320.png "Generated Images")
 
 ### Requirements:
-- Pytorch: 0.3.1
-- torchvision: 0.2.0
-- tensorboardX: 1.1
+- Pytorch: 0.4.0
+- torchvision: 0.2.1
+- tensorboardX: 1.2
 
 
 ### References:
