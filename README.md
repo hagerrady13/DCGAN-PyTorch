@@ -39,7 +39,7 @@ However, the number of filters in our implementation goes from 512 -> 256 -> 128
 - Starting number of discriminator filters: 64
 ```
 ### Usage:
-- To run the project, you need to add your configurations into the folder configs/. An example of the configurations that should be passed can be found [here](https://github.com/hagerrady13/DCGAN-Pytorch/blob/master/configs/dcgan_exp_0.json)
+- To run the project, you need to add your configurations into the folder configs/. An example of the configurations that should be passed can be found [here](https://github.com/hagerrady13/DCGAN-Pytorch/blob/master/configs/dcgan_exp.json)
 - ``` sh run.sh ```
 - To run on a GPU, you need to enable cuda in the config file.
 
