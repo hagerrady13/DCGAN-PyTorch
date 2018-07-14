@@ -1,8 +1,8 @@
-# DCGAN-Pytorch
+# DCGAN-PyTorch
 
-A pytorch implementation of [Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks](https://arxiv.org/abs/1511.06434)
+A PyTorch implementation of [Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks](https://arxiv.org/abs/1511.06434)
 
-### Project structure:
+### Project Structure:
 ```
 ├── agents
 |  └── dcgan.py # the main training agent for the dcgan
@@ -23,12 +23,12 @@ A pytorch implementation of [Unsupervised Representation Learning with Deep Conv
 ```
 
 ### Data Preparation:
-CelebA dataset has been used. Images are resized to 64x64. Data are placed into data/ folder.
+CelebA dataset has been used. All images are resized to 64x64. Data are placed into ```data/``` folder.
 
 ### Model:
 ![alt text](./utils/assets/gan_arch.png "Generator")
 
-This is the model we used in our implementation. However, the number of filters in our implementation goes from 512 -> 256 -> 128 -> 64. This can be tuned in the configurations file be editing the variables: num_filt_g and num_filt_d.
+This is the model we used in our implementation. However, the number of filters in our implementation goes from 512 -> 256 -> 128 -> 64. This can be tuned in the configurations file be editing the variables: ```num_filt_g``` and ```num_filt_d```.
 ### Experiment configs:
 ```
 - Input size: 64x64x3
@@ -46,12 +46,12 @@ This is the model we used in our implementation. However, the number of filters 
 - To run on a GPU, you need to enable cuda in the config file.
 
 ### Results:
-Loss:
+**Loss**:
 
 ![alt text](./utils/assets/loss.png "Loss during training")
 
 
-Generated Images after training:
+**Generated Images after training**:
 
 ![alt text](./utils/assets/samples_epoch_63320.png "Generated Images")
 

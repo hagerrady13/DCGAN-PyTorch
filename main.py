@@ -1,7 +1,7 @@
 """
-Main procedure for DCGAN project
+__author__ = "Hager Rady and Mo'men AbdelRazek"
 
-Authors: Hager Rady & Mo'men AbdelRazek
+Main procedure for DCGAN project
 
 Main
 -Capture the config file
