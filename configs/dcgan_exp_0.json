@@ -37,7 +37,7 @@
   "async_loading": true,
 
   "data_mode": "imgs",
-  "data_folder": "./data/",
+  "data_folder": "/media/kokomind/New Volume/data/celebA/resized_64_celebA_imgs/",
 
   "x_train": "",
   "y_train": "",
